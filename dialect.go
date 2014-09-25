@@ -1,4 +1,4 @@
-package modl
+package godm
 
 import (
 	"errors"
@@ -391,7 +391,7 @@ func (d MySQLDialect) QuoteField(f string) string {
 	return "`" + f + "`"
 }
 
-// FIXME: use sqlx's rebind, which was written after it had been created for modl
+// FIXME: use sqlx's rebind, which was written after it had been created for godm
 
 // ReBind formats the bindvars in the query string (these are '?') for the dialect.
 func ReBind(query string, dialect Dialect) string {

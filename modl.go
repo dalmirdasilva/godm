@@ -1,4 +1,4 @@
-package modl
+package godm
 
 // Changes Copyright 2013 Jason Moiron.  Original Gorp code
 // Copyright 2012 James Cooper. All rights reserved.
@@ -7,7 +7,7 @@ package modl
 // license that can be found in the LICENSE file.
 //
 // Source code and project home:
-// https://github.com/jmoiron/modl
+// https://github.com/jmoiron/godm
 
 import (
 	"database/sql"
@@ -15,7 +15,7 @@ import (
 	"reflect"
 )
 
-// NoKeysErr is a special error type returned when modl's CRUD helpers are
+// NoKeysErr is a special error type returned when godm's CRUD helpers are
 // used on tables which have not been set up with a primary key.
 type NoKeysErr struct {
 	Table *TableMap
@@ -26,7 +26,7 @@ func (n NoKeysErr) Error() string {
 	return fmt.Sprintf("Could not find keys for table %v", n.Table)
 }
 
-const versFieldConst = "[modl_ver_field]"
+const versFieldConst = "[godm_ver_field]"
 
 // OptimisticLockError is returned by Update() or Delete() if the
 // struct being modified has a Version field and the value is not equal to
@@ -106,7 +106,7 @@ type bindInstance struct {
 	autoIncrIdx     int
 }
 
-// SqlExecutor exposes modl operations that can be run from Pre/Post
+// SqlExecutor exposes godm operations that can be run from Pre/Post
 // hooks.  This hides whether the current operation that triggered the
 // hook is in a transaction.
 //
@@ -340,7 +340,7 @@ func insert(m *DbMap, e SqlExecutor, list ...interface{}) error {
 			if (k == reflect.Int) || (k == reflect.Int16) || (k == reflect.Int32) || (k == reflect.Int64) {
 				f.SetInt(id)
 			} else {
-				return fmt.Errorf("modl: Cannot set autoincrement value on non-Int field. SQL=%s  autoIncrIdx=%d", bi.query, bi.autoIncrIdx)
+				return fmt.Errorf("godm: Cannot set autoincrement value on non-Int field. SQL=%s  autoIncrIdx=%d", bi.query, bi.autoIncrIdx)
 			}
 		} else {
 			_, err := e.Exec(bi.query, bi.args...)

@@ -1,4 +1,4 @@
-package modl
+package godm
 
 import (
 	"bytes"
@@ -123,8 +123,8 @@ func TestCreateTablesIfNotExists(t *testing.T) {
 func TestPersistentUser(t *testing.T) {
 	dbmap := newDbMap()
 	dbmap.Exec("drop table if exists persistentuser")
-	if len(os.Getenv("MODL_TEST_TRACE")) > 0 {
-		dbmap.TraceOn("test", log.New(os.Stdout, "modltest: ", log.Lmicroseconds))
+	if len(os.Getenv("godm_TEST_TRACE")) > 0 {
+		dbmap.TraceOn("test", log.New(os.Stdout, "godmtest: ", log.Lmicroseconds))
 	}
 	dbmap.AddTable(PersistentUser{}).SetKeys(false, "mykey")
 	err := dbmap.CreateTablesIfNotExists()
@@ -308,7 +308,7 @@ func TestNullValues(t *testing.T) {
 
 func TestColumnProps(t *testing.T) {
 	dbmap := newDbMap()
-	//dbmap.TraceOn("", log.New(os.Stdout, "modltest: ", log.Lmicroseconds))
+	//dbmap.TraceOn("", log.New(os.Stdout, "godmtest: ", log.Lmicroseconds))
 	t1 := dbmap.AddTable(Invoice{}).SetKeys(true, "ID")
 	//t1.ColMap("Created").Rename("date_created")
 	t1.ColMap("Updated").SetTransient(true)
@@ -563,7 +563,7 @@ func TestVersionMultipleRows(t *testing.T) {
 
 func TestWithStringPk(t *testing.T) {
 	dbmap := newDbMap()
-	//dbmap.TraceOn("", log.New(os.Stdout, "modltest: ", log.Lmicroseconds))
+	//dbmap.TraceOn("", log.New(os.Stdout, "godmtest: ", log.Lmicroseconds))
 	dbmap.AddTableWithName(WithStringPk{}, "string_pk_test").SetKeys(true, "ID")
 	_, err := dbmap.Exec("create table string_pk_test (ID varchar(255), Name varchar(255));")
 	if err != nil {
@@ -653,11 +653,11 @@ func BenchmarkNativeCrud(b *testing.B) {
 
 }
 
-func BenchmarkModlCrud(b *testing.B) {
+func BenchmarkgodmCrud(b *testing.B) {
 	b.StopTimer()
 	dbmap := initDbMapBench()
 	defer dbmap.Cleanup()
-	//dbmap.TraceOn("", log.New(os.Stdout, "modltest: ", log.Lmicroseconds))
+	//dbmap.TraceOn("", log.New(os.Stdout, "godmtest: ", log.Lmicroseconds))
 	b.StartTimer()
 
 	inv := &Invoice{0, 100, 200, "my memo", 0, true}
@@ -714,7 +714,7 @@ func (d *DbMap) Cleanup() {
 
 func initDbMap() *DbMap {
 	dbmap := newDbMap()
-	//dbmap.TraceOn("", log.New(os.Stdout, "modltest: ", log.Lmicroseconds))
+	//dbmap.TraceOn("", log.New(os.Stdout, "godmtest: ", log.Lmicroseconds))
 	dbmap.AddTableWithName(Invoice{}, "invoice_test").SetKeys(true, "id")
 	dbmap.AddTableWithName(Person{}, "person_test").SetKeys(true, "id")
 	dbmap.AddTableWithName(WithIgnoredColumn{}, "ignored_column_test").SetKeys(true, "id")
@@ -846,7 +846,7 @@ func TestQuoteTableNames(t *testing.T) {
 
 	// Use a buffer to hold the log to check generated queries
 	var logBuffer bytes.Buffer
-	dbmap.TraceOn("", log.New(&logBuffer, "modltest:", log.Lmicroseconds))
+	dbmap.TraceOn("", log.New(&logBuffer, "godmtest:", log.Lmicroseconds))
 
 	// Create some rows
 	p1 := &Person{0, 0, 0, "bob", "smith", 0}
@@ -901,7 +901,7 @@ func TestWithTime(t *testing.T) {
 
 func initDbMapNulls() *DbMap {
 	dbmap := newDbMap()
-	//dbmap.TraceOn("", log.New(os.Stdout, "modltest: ", log.Lmicroseconds))
+	//dbmap.TraceOn("", log.New(os.Stdout, "godmtest: ", log.Lmicroseconds))
 	dbmap.AddTable(TableWithNull{}).SetKeys(false, "id")
 	err := dbmap.CreateTables()
 	if err != nil {
@@ -916,9 +916,9 @@ func newDbMap() *DbMap {
 }
 
 func connect(driver string) *sql.DB {
-	dsn := os.Getenv("MODL_TEST_DSN")
+	dsn := os.Getenv("godm_TEST_DSN")
 	if dsn == "" {
-		panic("MODL_TEST_DSN env variable is not set. Please see README.md")
+		panic("godm_TEST_DSN env variable is not set. Please see README.md")
 	}
 
 	db, err := sql.Open(driver, dsn)
@@ -933,7 +933,7 @@ func connect(driver string) *sql.DB {
 }
 
 func dialectAndDriver() (Dialect, string) {
-	switch os.Getenv("MODL_TEST_DIALECT") {
+	switch os.Getenv("godm_TEST_DIALECT") {
 	case "mysql":
 		return MySQLDialect{"InnoDB", "UTF8"}, "mysql"
 	case "postgres":
@@ -941,7 +941,7 @@ func dialectAndDriver() (Dialect, string) {
 	case "sqlite":
 		return SqliteDialect{}, "sqlite3"
 	}
-	panic("MODL_TEST_DIALECT env variable is not set or is invalid. Please see README.md")
+	panic("godm_TEST_DIALECT env variable is not set or is invalid. Please see README.md")
 }
 
 func _insert(dbmap *DbMap, list ...interface{}) {

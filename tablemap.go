@@ -1,4 +1,4 @@
-package modl
+package godm
 
 import (
 	"bytes"
@@ -52,7 +52,7 @@ func (t *TableMap) ResetSql() {
 func (t *TableMap) SetKeys(isAutoIncr bool, fieldNames ...string) *TableMap {
 	t.Keys = make([]*ColumnMap, 0)
 	for _, name := range fieldNames {
-		// FIXME: sqlx.NameMapper is a deprecated API.  modl should have its
+		// FIXME: sqlx.NameMapper is a deprecated API.  godm should have its
 		// own API which sets sqlx's mapping funcs as necessary
 		colmap := t.ColMap(sqlx.NameMapper(name))
 		colmap.isPK = true
